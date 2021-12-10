@@ -1,0 +1,26 @@
+{
+  "name": "default",
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "admin",
+  "password": "admin",
+  "database": "tsed",
+  "synchronize": true,
+  "logging": false,
+  "entities": [
+    "src/models/entities/**/*.{js,ts}"
+  ],
+  "migrationsTableName": "typeorm_migrations",
+  "migrations": [
+    "src/models/migrations/**/*.{js,ts}"
+  ],
+  "subscribers": [
+    "src/models/subscribers/**/*.{js,ts}"
+  ],
+  "cli": {
+    "entitiesDir": "src/models/entities",
+    "migrationsDir": "src/models/migrations",
+    "subscribersDir": "src/models/subscribers"
+  }
+}
