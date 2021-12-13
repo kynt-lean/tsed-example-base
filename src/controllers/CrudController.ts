@@ -1,26 +1,36 @@
-import { BodyParams, PathParams } from "@tsed/common";
+import { BodyParams, Intercept, PathParams, QueryParams } from "@tsed/common";
+import { Delete, Get, getJsonSchema, Patch, Post, Returns, Schema } from "@tsed/schema";
 import { Type } from "@tsed/core";
-import { Delete, Get, Patch, Post, Returns } from "@tsed/schema";
-import { CrudDecorators } from "../decorators/CrudDecorator";
+import { DeleteResultDto, InsertResultDto, UpdateResultDto } from "../models/dtos/CrudResultDto";
 import { ICrudService } from "../services/CrudService";
+import { SerializeInterceptor } from "../interceptors/SerializeInterceptor";
+import { RouteDecorator } from "../decorators/RouteDecorator";
 
 export declare type Constructor<T> = {
   new (...args: any[]): T;
 };
 
-export interface ICrudController<I extends ICrudService<T>, T, C, U, D> {
+export interface ICrudController<I extends ICrudService<T>, T, D> {
   service: I;
-  create(entity: C): Promise<any>;
-  update(id: string, entity: U): Promise<any>;
-  delete(id: string): Promise<any>;
-  findOne(id: string): Promise<any>;
+  create(entity: D): Promise<any>;
   find(criteria: T): Promise<any>;
-  findAndCount(criteria: T): Promise<any>;
+  findOne(id: string): Promise<any>;
+  update(id: string, entity: D): Promise<any>;
+  delete(id: string): Promise<any>;
 }
 
-export function CrudController<I extends ICrudService<T>, T, C, U, D>(dtoClass: Constructor<D>): Type<ICrudController<I, T, C, U, D>> {
-  @CrudDecorators()
-  class CrudControllerHost<I extends ICrudService<T>, T> implements ICrudController<I, T, C, U, D> {
+export function CrudController<I extends ICrudService<T>, T, D>
+(
+  entityClass: Constructor<T>,
+  dtoClass: Constructor<D>
+): Type<ICrudController<I, T, D>>
+{
+  const createSchema = getJsonSchema(dtoClass, { groups: ["create"] });
+  const updateSchema = getJsonSchema(dtoClass, { groups: ["update"] });
+  
+
+  @RouteDecorator()
+  class CrudControllerHost<I extends ICrudService<T>, T> implements ICrudController<I, T, D> {
     constructor(_service: I) {
       this.service = _service;
     }
@@ -34,10 +44,28 @@ export function CrudController<I extends ICrudService<T>, T, C, U, D>(dtoClass: 
      * Executes fast and efficient INSERT query.
      * Does not check if entity exist in the database, so query will fail if duplicate entity is being inserted.
      */
-    @Post('/create')
-    @Returns(201)
-    public async create(@BodyParams() entity: C) {
+    @Post('')
+    @Returns(201, InsertResultDto)
+    public async create(@BodyParams() @Schema(createSchema) entity: D) {
       return await this.service.repository.insert(entity);
+    }
+    /**
+     * Finds entities that match given options.
+     */
+    @Get('')
+    @Returns(200, Array).Of(dtoClass).Groups("read")
+    @Intercept(SerializeInterceptor, dtoClass)
+    public async find(@QueryParams({ expression: "criteria", useType: entityClass, useConverter: false }) criteria: T) {
+      return await this.service.repository.find(criteria);
+    }
+    /**
+     * Finds first entity that matches given conditions.
+     */
+    @Get('/:id')
+    @Returns(200, dtoClass).Groups("read")
+    @Intercept(SerializeInterceptor, dtoClass)
+    public async findOne(@PathParams('id') id: string) {
+      return await this.service.repository.findOne(id);
     }
     /**
      * Updates entity partially. Entity can be found by a given conditions.
@@ -45,9 +73,9 @@ export function CrudController<I extends ICrudService<T>, T, C, U, D>(dtoClass: 
      * Executes fast and efficient UPDATE query.
      * Does not check if entity exist in the database.
      */
-    @Patch('/update/:id')
-    @Returns(201)
-    public async update(@PathParams('id') id: string, @BodyParams() entity: U) {
+    @Patch('/:id')
+    @Returns(201, UpdateResultDto)
+    public async update(@PathParams('id') id: string, @BodyParams() @Schema(updateSchema) entity: D) {
       return await this.service.repository.update(id, entity);
     }
     /**
@@ -56,36 +84,10 @@ export function CrudController<I extends ICrudService<T>, T, C, U, D>(dtoClass: 
       * Executes fast and efficient DELETE query.
       * Does not check if entity exist in the database.
       */
-    @Delete('/delete/:id')
-    @Returns(200)
+    @Delete('/:id')
+    @Returns(200, DeleteResultDto)
     public async delete(@PathParams('id') id: string) {
       return await this.service.repository.delete(id);
-    }
-    /**
-     * Finds first entity that matches given conditions.
-     */
-    @Get('/findOne/:id')
-    @Returns(200, dtoClass)
-    public async findOne(@PathParams('id') id: string) {
-      return await this.service.repository.findOne(id);
-    }
-    /**
-      * Finds entities that match given options.
-      */
-    @Post('/find')
-    @Returns(200, dtoClass)
-    public async find(@BodyParams() criteria: T) {
-      return await this.service.repository.find(criteria);
-    }
-    /**
-      * Finds entities that match given find options.
-      * Also counts all entities that match given conditions,
-      * but ignores pagination settings (from and take options).
-      */
-    @Get('/findAndCount')
-    @Returns(200, dtoClass)
-    public async findAndCount(@BodyParams() criteria: T) {
-      return await this.service.repository.findAndCount(criteria);
     }
   }
 

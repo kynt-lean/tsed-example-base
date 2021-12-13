@@ -1,15 +1,16 @@
-import { BodyParams, Req } from "@tsed/common";
+import { BodyParams } from "@tsed/common";
 import { OnInstall, OnVerify, Protocol } from "@tsed/passport";
 import { Strategy } from "passport-local";
 import { BadRequest } from "@tsed/exceptions";
 import { UsersService } from "../services/UsersService";
-import { UserCreation } from "../models/dtos/UserCreation";
+import { Groups } from "@tsed/schema";
+import { UserDto } from "../models/dtos/UserDto";
 
 @Protocol({
   name: "signup",
   useStrategy: Strategy,
   settings: {
-    usernameField: "email",
+    usernameField: "userName",
     passwordField: "password"
   }
 })
@@ -17,15 +18,16 @@ export class SignupLocalProtocol implements OnVerify, OnInstall {
   constructor(private usersService: UsersService) {
   }
 
-  async $onVerify(@Req() request: Req, @BodyParams() user: UserCreation) {
-    const { email } = user;
-    const found = await this.usersService.repository.findOne({ email: email });
+  async $onVerify(@BodyParams() @Groups("create") user: UserDto) {
+    const { userName, email } = user;
+    const found = await this.usersService.repository.findOne({ where: [{ userName: userName }, {email: email}] });
 
     if (found) {
       throw new BadRequest("Email is already registered");
     }
 
-    return this.usersService.repository.insert(user);
+    const inserted = await this.usersService.repository.insert(user);
+    return this.usersService.repository.findOne(inserted.identifiers.find(() => true));
   }
 
   $onInstall(strategy: Strategy): void {

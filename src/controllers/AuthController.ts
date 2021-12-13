@@ -1,24 +1,30 @@
 import { BodyParams, Req } from "@tsed/common";
-import { Controller } from "@tsed/di";
+import { Controller, Intercept } from "@tsed/di";
 import { Authenticate } from "@tsed/passport";
-import { Post } from "@tsed/schema";
-import { Credentials } from "../models/dtos/Credentials";
-import { UserCreation } from "../models/dtos/UserCreation";
+import { Groups, Post, Returns } from "@tsed/schema";
+import { RouteDecorator } from "../decorators/RouteDecorator";
+import { SerializeInterceptor } from "../interceptors/SerializeInterceptor";
+import { UserDto } from "../models/dtos/UserDto";
 import { AuthService } from "../services/AuthService";
 
 @Controller("/auth")
+@RouteDecorator()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("/login")
   @Authenticate("login")
-  public async login(@Req() req: any, @BodyParams() credentials: Credentials) {
+  @Returns(200, UserDto).Groups("secret")
+  @Intercept(SerializeInterceptor, UserDto)
+  public async login(@Req() req: any, @BodyParams() @Groups("login") user: UserDto) {
     return await this.authService.login(req.user);
   }
 
   @Post("/signup")
   @Authenticate("signup")
-  signup(@Req() req: Req, @BodyParams() user: UserCreation) {
+  @Returns(200, UserDto).Groups("read")
+  @Intercept(SerializeInterceptor, UserDto)
+  signup(@Req() req: Req, @BodyParams() @Groups("create") user: UserDto) {
     return req.user;
   }
 }

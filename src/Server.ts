@@ -20,7 +20,7 @@ import { UserDto } from "./models/dtos/UserDto";
   ...config,
   acceptMimes: ["application/json"],
   httpPort: process.env.PORT || 8089,
-  httpsPort: false, // CHANGE
+  httpsPort: false,
   mount: {
     "/rest/v1": [
       `${rootDir}/controllers/**/*.ts`

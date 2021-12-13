@@ -1,4 +1,4 @@
-import { MaxLength, Property, Required } from "@tsed/schema";
+import { Property } from "@tsed/schema";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("users")
@@ -8,36 +8,31 @@ export class User {
   id: string;
 
   @Column()
-  @MaxLength(256)
-  @Required()
+  @Property()
   userName: string;
 
   @Column()
-  @MaxLength(256)
-  @Required()
+  @Property()
   email: string;
 
   @Column()
-  @MaxLength(256)
-  @Required()
+  @Property()
   password: string;
   
   @Column()
-  @MaxLength(256)
-  @Required()
+  @Property()
   firstName: string;
 
   @Column()
-  @MaxLength(256)
-  @Required()
+  @Property()
   lastName: string;
 
   @Column()
-  @MaxLength(256)
+  @Property()
   phone: string;
 
   @Column()
-  @MaxLength(256)
+  @Property()
   address: string;
 
   verifyPassword(password: string) {
