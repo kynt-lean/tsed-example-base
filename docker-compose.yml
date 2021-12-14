@@ -10,14 +10,14 @@ services:
         - no_proxy
     image: tsed-example-base/server:latest
     ports:
-      - '8081:8081'
+      - '8089:8089'
     stdin_open: true
     tty: true
   postgres:
-    image: postgres:9.6.1
+    image: postgres:latest
     ports:
       - '5432:5432'
     environment:
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
-      POSTGRES_DB: test
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: tsed

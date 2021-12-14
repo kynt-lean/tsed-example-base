@@ -8,26 +8,36 @@
 ##                        |_| |_____/|______|_____/                          ##
 ##                                                                           ##
 ## description     : Dockerfile for TsED Application                         ##
-## author          : TsED team                                               ##
-## date            : 2021-04-14                                              ##
-## version         : 1.1                                                     ##
+## author          : Kynt                                                    ##
+## date            : 2021-12-14                                              ##
+## version         : 0.0                                                     ##
 ##                                                                           ##
 ###############################################################################
 ###############################################################################
-FROM node:14-alpine
+# Building application
+FROM node:14.17-stretch-slim AS build
+# Create app directory
+WORKDIR /build
+# Install app dependencies
+COPY package*.json ./
+RUN yarn install 
+# Bundle app source
+COPY . .
+RUN yarn build
 
-RUN apk update && apk add build-base git python
-
-COPY package.json .
-COPY yarn.lock .
-COPY ./src ./src
-COPY ./dist ./dist
-COPY ./views ./views
-
-RUN yarn install --production
-
-EXPOSE 8081
-ENV PORT 8081
-ENV NODE_ENV production
-
-CMD ["yarn", "start:prod"]
+# Publish application to production
+FROM node:14.17-stretch-slim AS publish
+# Expose port
+EXPOSE 80
+# Environment
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+# Create app directory
+WORKDIR /node
+# Copy package.json
+COPY package*.json ./
+# Copy publish
+COPY --from=build /build/dist ./dist
+COPY --from=build /build/node_modules ./node_modules
+# Run service
+CMD ["node", "dist/index"]
