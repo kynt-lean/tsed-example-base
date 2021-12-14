@@ -11,7 +11,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("/login")
-  @RouteDecorator({ protocol: "login"})
+  @RouteDecorator({ authenticate: { protocol: "login" } })
   @Returns(200, UserDto).Groups("secret")
   @Intercept(SerializeInterceptor, UserDto)
   public async login(@Req() req: any, @BodyParams() @Groups("login") user: UserDto) {
@@ -19,7 +19,7 @@ export class AuthController {
   }
 
   @Post("/signup")
-  @RouteDecorator({ protocol: "signup"})
+  @RouteDecorator({ authenticate: { protocol: "signup" } })
   @Returns(200, UserDto).Groups("read")
   @Intercept(SerializeInterceptor, UserDto)
   signup(@Req() req: Req, @BodyParams() @Groups("create") user: UserDto) {

@@ -32,7 +32,19 @@ import { UserDto } from "./models/dtos/UserDto";
   swagger: [
     {
       path: "/v1/docs",
-      specVersion: "3.0.1"
+      specVersion: "3.0.1",
+      spec: {
+        components: {
+          securitySchemes: {
+            bearer: {
+              type: "http",
+              scheme: "bearer",
+              bearerFormat: "JWT",
+              description: "Jwt description"
+            }
+          }
+        }
+      }
     }
   ],
   views: {

@@ -28,8 +28,7 @@ export function CrudController<I extends ICrudService<T>, T, D>
   const createSchema = getJsonSchema(dtoClass, { groups: ["create"] });
   const updateSchema = getJsonSchema(dtoClass, { groups: ["update"] });
   
-
-  @RouteDecorator()
+  @RouteDecorator({ authenticate: { protocol: "jwt" } , security: { name: "bearer" } })
   class CrudControllerHost<I extends ICrudService<T>, T> implements ICrudController<I, T, D> {
     constructor(_service: I) {
       this.service = _service;
