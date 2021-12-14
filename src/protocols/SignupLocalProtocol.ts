@@ -20,9 +20,14 @@ export class SignupLocalProtocol implements OnVerify, OnInstall {
 
   async $onVerify(@BodyParams() @Groups("create") user: UserDto) {
     const { userName, email } = user;
-    const found = await this.usersService.repository.findOne({ where: [{ userName: userName }, {email: email}] });
 
-    if (found) {
+    const foundUser = await this.usersService.repository.findOne({ userName: userName });
+    if (foundUser) {
+      throw new BadRequest("User is already registered");
+    }
+    
+    const foundEmail = await this.usersService.repository.findOne({ email: email });
+    if (foundEmail) {
       throw new BadRequest("Email is already registered");
     }
 

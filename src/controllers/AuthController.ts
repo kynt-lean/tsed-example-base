@@ -1,6 +1,5 @@
 import { BodyParams, Req } from "@tsed/common";
 import { Controller, Intercept } from "@tsed/di";
-import { Authenticate } from "@tsed/passport";
 import { Groups, Post, Returns } from "@tsed/schema";
 import { RouteDecorator } from "../decorators/RouteDecorator";
 import { SerializeInterceptor } from "../interceptors/SerializeInterceptor";
@@ -8,12 +7,11 @@ import { UserDto } from "../models/dtos/UserDto";
 import { AuthService } from "../services/AuthService";
 
 @Controller("/auth")
-@RouteDecorator()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("/login")
-  @Authenticate("login")
+  @RouteDecorator({ protocol: "login"})
   @Returns(200, UserDto).Groups("secret")
   @Intercept(SerializeInterceptor, UserDto)
   public async login(@Req() req: any, @BodyParams() @Groups("login") user: UserDto) {
@@ -21,7 +19,7 @@ export class AuthController {
   }
 
   @Post("/signup")
-  @Authenticate("signup")
+  @RouteDecorator({ protocol: "signup"})
   @Returns(200, UserDto).Groups("read")
   @Intercept(SerializeInterceptor, UserDto)
   signup(@Req() req: Req, @BodyParams() @Groups("create") user: UserDto) {
