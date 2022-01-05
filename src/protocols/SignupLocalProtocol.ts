@@ -4,7 +4,7 @@ import { Strategy } from "passport-local";
 import { BadRequest } from "@tsed/exceptions";
 import { UsersService } from "../services/UsersService";
 import { Groups } from "@tsed/schema";
-import { UserDto } from "../models/dtos/UserDto";
+import { User } from "../models/entities/User";
 
 @Protocol({
   name: "signup",
@@ -18,7 +18,7 @@ export class SignupLocalProtocol implements OnVerify, OnInstall {
   constructor(private usersService: UsersService) {
   }
 
-  async $onVerify(@BodyParams() @Groups("create") user: UserDto) {
+  async $onVerify(@BodyParams() @Groups("create") user: User) {
     const { userName, email } = user;
 
     const foundUser = await this.usersService.repository.findOne({ userName: userName });

@@ -46,7 +46,7 @@ export class JwtService {
 
   sign(payload: string | Buffer | object, options?: JwtSignOptions): string {
     const signOptions = this.mergeJwtOptions(
-      { ...options },
+      { ...(options || jwtOptions) },
       'signOptions'
     ) as jwt.SignOptions;
     const secret = this.getSecretKey(

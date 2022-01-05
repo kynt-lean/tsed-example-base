@@ -1,5 +1,5 @@
 import { Interceptor, InterceptorContext, InterceptorMethods, InterceptorNext } from "@tsed/common";
-import { plainToInstance } from "class-transformer";
+import { deserialize } from "@tsed/json-mapper";
 
 @Interceptor()
 export class PaginationInterceptor implements InterceptorMethods {
@@ -18,14 +18,15 @@ export class PaginationInterceptor implements InterceptorMethods {
     const result = await next();
 
     // must return the returned value back to the caller
+    const data = deserialize(result, { type: context.options });
     return Array.isArray(result)
           ? {
-              data: plainToInstance(context.options, result),
+              data,
               totalCount: result.length
             }
           : result
             ? {
-                data: [plainToInstance(context.options, result)],
+                data,
                 totalCount: 1
               }
             : {

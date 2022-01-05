@@ -1,12 +1,10 @@
 import { Injectable } from "@tsed/di";
 import { User } from "../models/entities/User";
 import { UsersRepository } from "../models/repositories/UsersRepository";
-import { CrudService, ICrudService } from "./CrudService";
-
-export interface IUsersService extends ICrudService<User> {}
+import { CrudService } from "./CrudService";
 
 @Injectable()
-export class UsersService extends CrudService<User>() implements IUsersService {
+export class UsersService extends CrudService<User>() {
   constructor(_repository: UsersRepository) {
     super(_repository);
   }

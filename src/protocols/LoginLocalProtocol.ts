@@ -3,8 +3,8 @@ import { OnInstall, OnVerify, Protocol } from "@tsed/passport";
 import { IStrategyOptions, Strategy } from "passport-local";
 import { Unauthorized } from "@tsed/exceptions";
 import { UsersService } from "../services/UsersService";
-import { UserDto } from "../models/dtos/UserDto";
 import { Groups } from "@tsed/schema";
+import { User } from "../models/entities/User";
 
 @Protocol<IStrategyOptions>({
   name: "login",
@@ -18,7 +18,7 @@ export class LoginLocalProtocol implements OnVerify, OnInstall {
   constructor(private usersService: UsersService) {
   }
 
-  async $onVerify(@Req() request: Req, @BodyParams() @Groups("login") credentials: UserDto) {
+  async $onVerify(@Req() request: Req, @BodyParams() @Groups("login") credentials: User) {
     const { userName, password } = credentials;
 
     const user = await this.usersService.repository.findOne({ where: [{ userName: userName }, {email: userName}] });

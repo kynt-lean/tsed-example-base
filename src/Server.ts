@@ -13,13 +13,14 @@ import cors from "cors";
 import session from "express-session";
 import {config, rootDir} from "./config";
 import { IndexCtrl } from "./controllers/pages/IndexController";
-import { UserDto } from "./models/dtos/UserDto";
+import { appConfig } from "./config/env";
+import { User } from "./models/entities/User";
 
 
 @Configuration({
   ...config,
   acceptMimes: ["application/json"],
-  httpPort: process.env.PORT || 8089,
+  httpPort: appConfig.httpPort,
   httpsPort: false,
   mount: {
     "/rest/v1": [
@@ -60,7 +61,7 @@ import { UserDto } from "./models/dtos/UserDto";
     `${rootDir}/protocols/*.ts`
   ],
   passport: {
-    userInfoModel: UserDto
+    userInfoModel: User
   }
 })
 export class Server {
@@ -81,7 +82,7 @@ export class Server {
         extended: true
       }))
       .use(session({
-        secret: "keyboard cat",
+        secret: "jtw screte",
         resave: false,
         saveUninitialized: true,
         cookie: {

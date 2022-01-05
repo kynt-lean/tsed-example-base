@@ -1,5 +1,5 @@
-import { defaultConfig } from "./default.config";
+import defaultConfig from "./default.config.json";
 
 export default [
-  defaultConfig
+  defaultConfig as any
 ];

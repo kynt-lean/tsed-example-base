@@ -1,35 +1,36 @@
 import { BodyParams, Intercept, PathParams, QueryParams } from "@tsed/common";
-import { Delete, Get, getJsonSchema, Patch, Post, Returns, Schema } from "@tsed/schema";
+import { Delete, Get, getJsonSchema, Groups, Patch, Post, Returns, Schema } from "@tsed/schema";
 import { Type } from "@tsed/core";
 import { DeleteResultDto, InsertResultDto, UpdateResultDto } from "../models/dtos/CrudResultDto";
 import { ICrudService } from "../services/CrudService";
-import { SerializeInterceptor } from "../interceptors/SerializeInterceptor";
 import { RouteDecorator } from "../decorators/RouteDecorator";
 
 export declare type Constructor<T> = {
   new (...args: any[]): T;
 };
 
-export interface ICrudController<I extends ICrudService<T>, T, D> {
+export interface ICrudController<I extends ICrudService<T>, T> {
   service: I;
-  create(entity: D): Promise<any>;
+  create(entity: T): Promise<any>;
   find(criteria: T): Promise<any>;
   findOne(id: string): Promise<any>;
-  update(id: string, entity: D): Promise<any>;
+  update(id: string, entity: T): Promise<any>;
   delete(id: string): Promise<any>;
 }
 
-export function CrudController<I extends ICrudService<T>, T, D>
+export function CrudController<I extends ICrudService<T>, T>
 (
-  entityClass: Constructor<T>,
-  dtoClass: Constructor<D>
-): Type<ICrudController<I, T, D>>
+  entityClass: Constructor<T>
+): Type<ICrudController<I, T>>
 {
-  const createSchema = getJsonSchema(dtoClass, { groups: ["create"] });
-  const updateSchema = getJsonSchema(dtoClass, { groups: ["update"] });
+  const createSchema = getJsonSchema(entityClass, { groups: ["create"] });
+  const updateSchema = getJsonSchema(entityClass, { groups: ["update"] });
+  const readSchema = getJsonSchema(entityClass, { groups: ["read"] });
+  const criteriaSchema = getJsonSchema(entityClass, { groups: ["criteria"] });
+  const entitySchema = getJsonSchema(entityClass);
   
   @RouteDecorator({ authenticate: { protocol: "jwt" } , security: { name: "bearer" } })
-  class CrudControllerHost<I extends ICrudService<T>, T> implements ICrudController<I, T, D> {
+  class CrudControllerHost<I extends ICrudService<T>, T> implements ICrudController<I, T> {
     constructor(_service: I) {
       this.service = _service;
     }
@@ -39,48 +40,40 @@ export function CrudController<I extends ICrudService<T>, T, D>
     public readonly service: I;
     /**
      * Inserts a given entity into the database.
-     * Unlike save method executes a primitive operation without cascades, relations and other operations included.
-     * Executes fast and efficient INSERT query.
      * Does not check if entity exist in the database, so query will fail if duplicate entity is being inserted.
      */
     @Post('')
     @Returns(201, InsertResultDto)
-    public async create(@BodyParams() @Schema(createSchema) entity: D) {
+    public async create(@BodyParams() @Groups("create")  @Schema(createSchema ? createSchema : entitySchema) entity: T) {
       return await this.service.repository.insert(entity);
     }
     /**
-     * Finds entities that match given options.
+     * Finds entities that match given criteria.
      */
     @Get('')
-    @Returns(200, Array).Of(dtoClass).Groups("read")
-    @Intercept(SerializeInterceptor, dtoClass)
-    public async find(@QueryParams({ expression: "criteria", useType: entityClass, useConverter: false }) criteria: T) {
+    @Returns(200, Array).Of(entityClass).Schema(readSchema ? readSchema : entitySchema)
+    public async find(@QueryParams({ expression: "criteria", useType: entityClass, useConverter: false }) @Groups("criteria") @Schema(criteriaSchema ? criteriaSchema : entitySchema) criteria: T) {
       return await this.service.repository.find(criteria);
     }
     /**
      * Finds first entity that matches given conditions.
      */
     @Get('/:id')
-    @Returns(200, dtoClass).Groups("read")
-    @Intercept(SerializeInterceptor, dtoClass)
+    @Returns(200, entityClass).Schema(readSchema ? readSchema : entitySchema)
     public async findOne(@PathParams('id') id: string) {
       return await this.service.repository.findOne(id);
     }
     /**
      * Updates entity partially. Entity can be found by a given conditions.
-     * Unlike save method executes a primitive operation without cascades, relations and other operations included.
-     * Executes fast and efficient UPDATE query.
      * Does not check if entity exist in the database.
      */
     @Patch('/:id')
     @Returns(201, UpdateResultDto)
-    public async update(@PathParams('id') id: string, @BodyParams() @Schema(updateSchema) entity: D) {
+    public async update(@PathParams('id') id: string, @BodyParams() @Groups("update") @Schema(updateSchema ? updateSchema : entitySchema) entity: T) {
       return await this.service.repository.update(id, entity);
     }
     /**
       * Deletes entities by a given criteria.
-      * Unlike save method executes a primitive operation without cascades, relations and other operations included.
-      * Executes fast and efficient DELETE query.
       * Does not check if entity exist in the database.
       */
     @Delete('/:id')

@@ -9,6 +9,6 @@ export const config: Partial<TsED.Configuration> = {
   version,
   rootDir,
   logger: loggerConfig,
-  typeorm: typeormConfig,
+  typeorm: typeormConfig
   // additional shared configuration
 };

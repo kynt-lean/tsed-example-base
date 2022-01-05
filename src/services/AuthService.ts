@@ -1,7 +1,6 @@
 import { Injectable } from "@tsed/di";
-import { jwtOptions } from "../config/jwt/jwt.config";
 import { User } from "../models/entities/User";
-import { JwtService, JwtSignOptions } from "./JwtService";
+import { JwtService } from "./JwtService";
 
 @Injectable()
 export class AuthService {
@@ -15,7 +14,7 @@ export class AuthService {
       usr: user.userName
     };
     return {
-      token: this.jwtService.sign(payload, jwtOptions as JwtSignOptions)
+      token: this.jwtService.sign(payload)
     };
   }
 }

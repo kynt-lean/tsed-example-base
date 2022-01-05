@@ -1,7 +1,7 @@
 import { JwtSignOptions, JwtVerifyOptions } from "../../services/JwtService";
 
 export const jwtOptions: JwtSignOptions | JwtVerifyOptions = {
-  secret: "this is my super secret key for jwt",
-  privateKey: "private secret",
+  secret: "jtw screte",
+  privateKey: "papa screte",
   expiresIn: "1d"
 };
