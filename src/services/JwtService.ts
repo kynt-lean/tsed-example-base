@@ -31,11 +31,15 @@ export interface JwtOptions {
 export interface JwtSignOptions extends jwt.SignOptions {
   secret?: string | Buffer;
   privateKey?: string | Buffer;
+  issuer?: string | undefined;
+  audience?: string | undefined;
 }
 
 export interface JwtVerifyOptions extends jwt.VerifyOptions {
   secret?: string | Buffer;
   publicKey?: string | Buffer;
+  issuer?: string | undefined;
+  audience?: string | undefined;
 }
 
 @Injectable()

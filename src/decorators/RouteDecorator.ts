@@ -5,7 +5,7 @@ import { Returns, Security } from "@tsed/schema";
 
 export interface RouteDecoratorOptions {
   authenticate?: RouteAuthenticateOptions;
-  security?: RouteSecurityOptions;  
+  security?: RouteSecurityOptions;
 }
 
 export interface RouteAuthenticateOptions {
@@ -29,6 +29,7 @@ export function RouteDecorator(options?: RouteDecoratorOptions): Function {
     Returns(501).Description("Server error")
   ];
   if (options?.authenticate) {
+    // decorators.push(Authenticate(options?.authenticate.protocol, options?.authenticate.options || { session: false }));
     decorators.push(Authenticate(options?.authenticate.protocol, options?.authenticate.options));
   }
   if (options?.security) {

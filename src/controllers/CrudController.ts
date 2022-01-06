@@ -1,4 +1,4 @@
-import { BodyParams, Intercept, PathParams, QueryParams } from "@tsed/common";
+import { BodyParams, Intercept, PathParams, QueryParams, Req } from "@tsed/common";
 import { Delete, Get, getJsonSchema, Groups, Patch, Post, Returns, Schema } from "@tsed/schema";
 import { Type } from "@tsed/core";
 import { DeleteResultDto, InsertResultDto, UpdateResultDto } from "../models/dtos/CrudResultDto";
@@ -13,7 +13,7 @@ export interface ICrudController<I extends ICrudService<T>, T> {
   service: I;
   create(entity: T): Promise<any>;
   find(criteria: T): Promise<any>;
-  findOne(id: string): Promise<any>;
+  findOne(id: string, req: any): Promise<any>;
   update(id: string, entity: T): Promise<any>;
   delete(id: string): Promise<any>;
 }
@@ -59,8 +59,8 @@ export function CrudController<I extends ICrudService<T>, T>
      * Finds first entity that matches given conditions.
      */
     @Get('/:id')
-    @Returns(200, entityClass).Schema(readSchema ? readSchema : entitySchema)
-    public async findOne(@PathParams('id') id: string) {
+    @Returns(200).Schema(readSchema ? readSchema : entitySchema)
+    public async findOne(@PathParams('id') id: string, @Req() req: any) {
       return await this.service.repository.findOne(id);
     }
     /**

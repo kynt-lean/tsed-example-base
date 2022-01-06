@@ -84,7 +84,8 @@ export class Server {
       .use(session({
         secret: "jtw screte",
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
+        unset: 'destroy',
         cookie: {
           secure: false
         }

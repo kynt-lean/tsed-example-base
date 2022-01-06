@@ -1,18 +1,18 @@
 import { Req } from "@tsed/common";
 import { Unauthorized } from "@tsed/exceptions";
 import { Arg, OnVerify, Protocol } from "@tsed/passport";
-import { ExtractJwt, Strategy } from "passport-jwt";
+import { ExtractJwt, Strategy, StrategyOptions } from "passport-jwt";
 import { jwtOptions } from "../config/jwt/jwt.config";
 import { UsersService } from "../services/UsersService";
 
-@Protocol({
+@Protocol<StrategyOptions>({
   name: "jwt",
   useStrategy: Strategy,
   settings: {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: jwtOptions.secret,
-    issuer: "accounts.examplesoft.com",
-    audience: "yoursite.net"
+    issuer: jwtOptions.issuer,
+    audience: jwtOptions.audience
   }
 })
 export class JwtProtocol implements OnVerify {
@@ -25,6 +25,6 @@ export class JwtProtocol implements OnVerify {
       throw new Unauthorized("Wrong token");
     }
 
-    req.user = user;
+    return user ? user : false;
   }
 }

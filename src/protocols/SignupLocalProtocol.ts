@@ -32,7 +32,7 @@ export class SignupLocalProtocol implements OnVerify, OnInstall {
     }
 
     const inserted = await this.usersService.repository.insert(user);
-    return this.usersService.repository.findOne(inserted.identifiers.find(() => true));
+    return this.usersService.repository.findOne(inserted.identifiers.find(() => true));    
   }
 
   $onInstall(strategy: Strategy): void {
