@@ -9,18 +9,18 @@
   "synchronize": true,
   "logging": false,
   "entities": [
-    "src/models/entities/**/*.{js,ts}"
+    "src/app/models/entities/**/*.{js,ts}"
   ],
   "migrationsTableName": "typeorm_migrations",
   "migrations": [
-    "src/models/migrations/**/*.{js,ts}"
+    "src/app/models/migrations/**/*.{js,ts}"
   ],
   "subscribers": [
-    "src/models/subscribers/**/*.{js,ts}"
+    "src/app/models/subscribers/**/*.{js,ts}"
   ],
   "cli": {
-    "entitiesDir": "src/models/entities",
-    "migrationsDir": "src/models/migrations",
-    "subscribersDir": "src/models/subscribers"
+    "entitiesDir": "src/app/models/entities",
+    "migrationsDir": "src/app/models/migrations",
+    "subscribersDir": "src/app/models/subscribers"
   }
 }

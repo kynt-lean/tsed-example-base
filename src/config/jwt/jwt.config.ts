@@ -1,6 +1,6 @@
-import { JwtSignOptions, JwtVerifyOptions } from "../../services/JwtService";
+import { JwtConfigOptions } from "../../shared/jwt";
 
-export const jwtOptions: JwtSignOptions | JwtVerifyOptions = {
+export const jwtConfig: JwtConfigOptions = {
   secret: "jtw screte",
   privateKey: "papa screte",
   expiresIn: "1d",
