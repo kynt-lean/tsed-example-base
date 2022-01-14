@@ -1,1 +1,1 @@
-export * from "./RouteDecorator";
+export * from "./route.decorator";

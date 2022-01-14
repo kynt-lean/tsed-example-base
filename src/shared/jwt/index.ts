@@ -1,4 +1,4 @@
-import { JwtConfigOptions } from "./interfaces/JwtOptions";
+import { JwtConfigOptions } from "./interfaces/jwt-options.interface";
 
 declare global {
   namespace TsED {
@@ -11,5 +11,5 @@ declare global {
   }
 }
 
-export * from "./interfaces/JwtOptions";
-export * from "./services/JwtService";
+export * from "./interfaces/jwt-options.interface";
+export * from "./services/jwt.service";

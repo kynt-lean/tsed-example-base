@@ -1,2 +1,2 @@
-export * from "./DeserializeInterceptor";
-export * from "./PaginationInterceptor";
+export * from "./deserialize.interceptor";
+export * from "./pagination.interceptor";

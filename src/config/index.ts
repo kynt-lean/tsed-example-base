@@ -1,10 +1,11 @@
 import { SessionOptions } from "express-session";
 import { join } from "path";
-import { IndexController } from "../app/home/IndexController";
-import { User } from "../app/models/entities/User";
-import { appConfig } from "./env";
+import { IndexController } from "../app/home/index.controller";
+import { User } from "../app/models/entities/user";
+import { appEnv } from "./env";
 import { jwtConfig } from "./jwt";
 import { loggerConfig } from "./logger";
+import { rmqConfig } from "./microservices";
 import typeormConfig from "./typeorm";
 
 const { version } = require("../../package.json");
@@ -16,7 +17,7 @@ export const config: Partial<TsED.Configuration> = {
   logger: loggerConfig,
   typeorm: typeormConfig,
   acceptMimes: ["application/json"],
-  httpPort: appConfig.httpPort,
+  httpPort: appEnv.httpPort,
   httpsPort: false,
   mount: {
     "/rest/v1": [
@@ -55,7 +56,8 @@ export const config: Partial<TsED.Configuration> = {
   ],
   componentsScan: [
     `${rootDir}/core/protocols/**/*.ts`,
-    // `${rootDir}/app/jobs/**/*.ts`
+    // `${rootDir}/app/jobs/**/*.ts`,
+    `${rootDir}/app/microservices/**/*.ts`,
   ],
   passport: {
     userInfoModel: User
@@ -63,7 +65,8 @@ export const config: Partial<TsED.Configuration> = {
   jwt: jwtConfig,
   schedule: {
     enabled: false
-  }
+  },
+  microservice: rmqConfig
 };
 
 export const sessionOptions: SessionOptions = {

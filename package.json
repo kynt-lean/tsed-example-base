@@ -29,6 +29,8 @@
     "@tsed/swagger": "^6.98.0",
     "@tsed/typeorm": "^6.98.0",
     "ajv": "^8.8.2",
+    "amqp-connection-manager": "^4.0.0",
+    "amqplib": "^0.8.0",
     "body-parser": "^1.19.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
@@ -44,6 +46,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.7.1",
+    "rxjs": "^7.5.2",
     "typeorm": "^0.2.41",
     "uuid": "^8.3.2"
   },
