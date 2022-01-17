@@ -1,5 +1,6 @@
-import defaultConfig from "./default.config.json";
+import { ConnectionOptions } from "typeorm";
+import defaultConfig from "./default.config";
 
 export const typeormConfig = [
-  defaultConfig as any
+  defaultConfig as ConnectionOptions
 ];

@@ -12,10 +12,10 @@
     "test:unit": "cross-env NODE_ENV=test jest",
     "test:coverage": "yarn run test:unit",
     "typeorm": "tsed typeorm",
-    "migrate:generate": "ts-node ./node_modules/typeorm/cli.js migration:generate -f ./src/config/typeorm/default.config.json -c default -n",
-    "migrate:create": "ts-node ./node_modules/typeorm/cli.js migration:create -f ./src/config/typeorm/default.config.json  -c default -n",
-    "migrate:up": "ts-node ./node_modules/typeorm/cli.js migration:run -f ./src/config/typeorm/default.config.json -c default",
-    "migrate:down": "ts-node ./node_modules/typeorm/cli.js migration:revert -f ./src/config/typeorm/default.config.json -c default"
+    "migrate:generate": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:generate -f src/config/typeorm/default.config.ts -n",
+    "migrate:create": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:create -f src/config/typeorm/default.config.ts -n",
+    "migrate:up": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:run -f src/config/typeorm/default.config.ts",
+    "migrate:down": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:revert -f src/config/typeorm/default.config.ts"
   },
   "dependencies": {
     "@tsed/ajv": "^6.98.0",

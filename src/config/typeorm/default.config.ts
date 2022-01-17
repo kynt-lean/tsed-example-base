@@ -1,9 +1,9 @@
-import { ConnectionOptions } from "typeorm";
 import { DbEnv } from "../env";
+import { rootDir } from "..";
 
-export const defaultConfig: ConnectionOptions = {
+export = {
   name: "default",
-  type: "mssql",
+  type: "postgres",
   host: DbEnv.host,
   port: DbEnv.port,
   username: DbEnv.username,
@@ -12,20 +12,17 @@ export const defaultConfig: ConnectionOptions = {
   synchronize: false,
   logging: false,
   entities: [
-    "${rootDir}/app/models/entities/**/*.{js,ts}"
+    `${rootDir}/app/models/entities/**/*.{js,ts}`
   ],
   migrations: [
-    "${rootDir}/app/models/migrations/**/*.{js,ts}"
+    `${rootDir}/app/models/migrations/**/*.{js,ts}`
   ],
   subscribers: [
-    "${rootDir}/app/models/subscribers/**/*.{js,ts}"
+    `${rootDir}/app/models/subscribers/**/*.{js,ts}`
   ],
   cli: {
-    "entitiesDir": "${rootDir}/app/models/entities",
-    "migrationsDir": "${rootDir}/app/models/migrations",
-    "subscribersDir": "${rootDir}/app/models/subscribers"
-  },
-  options: {
-    encrypt: false
+    "entitiesDir": `${rootDir}/app/models/entities`,
+    "migrationsDir": `${rootDir}/app/models/migrations`,
+    "subscribersDir": `${rootDir}/app/models/subscribers`
   }
 };
