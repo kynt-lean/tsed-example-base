@@ -1,9 +1,9 @@
 import { JwtConfigOptions } from "../../shared/jwt";
+import { jwtEnv } from "../env";
 
 export const jwtConfig: JwtConfigOptions = {
-  secret: "jtw screte",
-  privateKey: "papa screte",
-  expiresIn: "1d",
-  issuer: "accounts.examplesoft.com",
-  audience: "yoursite.net"
+  secret: jwtEnv.secret,  
+  issuer: jwtEnv.issuer,
+  audience: jwtEnv.audience,
+  expiresIn: jwtEnv.expiresIn,
 };

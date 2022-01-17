@@ -1,26 +1,28 @@
 import { SessionOptions } from "express-session";
 import { join } from "path";
 import { IndexController } from "../app/home/index.controller";
-import { User } from "../app/models/entities/user";
 import { appEnv } from "./env";
-import { jwtConfig } from "./jwt";
 import { loggerConfig } from "./logger";
+import { jwtConfig } from "./jwt";
+import { typeormConfig } from "./typeorm";
 import { rmqConfig } from "./microservices";
-import typeormConfig from "./typeorm";
+import { User } from "../app/models";
 
 const { version } = require("../../package.json");
 export const rootDir = join(__dirname, "..");
+const prefix = appEnv.prefix;
+const apiVersion = "v1";
+const baseRoute = `/${prefix}/${apiVersion}`;
 
 export const config: Partial<TsED.Configuration> = {
   version,
   rootDir,
-  logger: loggerConfig,
-  typeorm: typeormConfig,
+  logger: loggerConfig,  
   acceptMimes: ["application/json"],
   httpPort: appEnv.httpPort,
   httpsPort: false,
   mount: {
-    "/rest/v1": [
+    [baseRoute]: [
       `${rootDir}/app/controllers/**/*.ts`
     ],
     "/": [
@@ -29,7 +31,7 @@ export const config: Partial<TsED.Configuration> = {
   },
   swagger: [
     {
-      path: "/v1/docs",
+      path: `${baseRoute}/docs`,
       specVersion: "3.0.1",
       spec: {
         components: {
@@ -57,15 +59,15 @@ export const config: Partial<TsED.Configuration> = {
   componentsScan: [
     `${rootDir}/core/protocols/**/*.ts`,
     // `${rootDir}/app/jobs/**/*.ts`,
-    `${rootDir}/app/microservices/**/*.ts`,
   ],
   passport: {
     userInfoModel: User
-  },
-  jwt: jwtConfig,
+  },  
   schedule: {
     enabled: false
   },
+  jwt: jwtConfig,
+  // typeorm: typeormConfig,
   microservice: rmqConfig
 };
 

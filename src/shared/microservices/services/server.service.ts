@@ -1,4 +1,4 @@
-import { Inject, Injectable, InjectorService, Provider } from "@tsed/common";
+import { Inject, Injectable, InjectorService, Provider, ProviderType } from "@tsed/common";
 import { connectable, Observable, Subject } from "rxjs";
 import { PROVIDER_SERVER_MICROSERVICE } from "../constants";
 import { RpcProxy } from "../context";
@@ -48,7 +48,7 @@ export class ServerService {
     const store = provider.store.get<MsStore>("microservice");
     const msClass = provider.name;
 
-    if (!store[msClass]) {
+    if (!store || !store[msClass]) {
       return;
     }
 
@@ -83,7 +83,7 @@ export class ServerService {
   }
 
   protected getProviders(): Provider<any>[] {
-    return Array.from(this.injector.getProviders(PROVIDER_SERVER_MICROSERVICE));
+    return Array.from(this.injector.getProviders(ProviderType.CONTROLLER));
   }
 
   protected connectIfStream(source: Observable<unknown>) {

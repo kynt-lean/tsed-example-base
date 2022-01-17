@@ -13,10 +13,7 @@ import session from "express-session";
 import { config, sessionOptions } from "./config";
 
 @Configuration({
-  ...config,
-  imports: [
-    // MicroserviceModule
-  ]
+  ...config
 })
 export class Server {
   @Inject()

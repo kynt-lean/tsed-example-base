@@ -1,5 +1,5 @@
 import defaultConfig from "./default.config.json";
 
-export default [
+export const typeormConfig = [
   defaultConfig as any
 ];

@@ -2,9 +2,9 @@ import { BodyParams, Req } from "@tsed/common";
 import { OnInstall, OnVerify, Protocol } from "@tsed/passport";
 import { IStrategyOptions, Strategy } from "passport-local";
 import { Unauthorized } from "@tsed/exceptions";
-import { UsersService } from "../../../app/services/users/users.service";
 import { Groups } from "@tsed/schema";
-import { User } from "../../../app/models/entities/user";
+import { UsersService } from "../../../app/services";
+import { User } from "../../../app/models";
 
 @Protocol<IStrategyOptions>({
   name: "login",

@@ -1,6 +1,6 @@
 import { Injectable } from "@tsed/common";
 import { JwtService } from "../../../shared/jwt";
-import { User } from "../../models/entities/user";
+import { User } from "../../models";
 
 @Injectable()
 export class AuthService {

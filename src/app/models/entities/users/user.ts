@@ -1,8 +1,6 @@
 import { OnSerialize } from "@tsed/json-mapper";
 import { Groups, Property, Required, RequiredGroups } from "@tsed/schema";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-// @Entity("users")
 @Groups<User>({
   // will generate create schema
   create: ["firstName", "lastName", "email", "phone", "address", "userName", "password"],
@@ -20,40 +18,32 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
   criteria: ["id", "email", "userName", "firstName", "lastName", "phone", "address"]
 })
 export class User {
-  @PrimaryGeneratedColumn("uuid")
   @Property()
   id: string;
 
-  @Column()
   @RequiredGroups("!criteria")
   @Required()
   userName: string;
 
-  @Column()
   @RequiredGroups("!criteria")
   @Required()
   email: string;
 
-  @Column()
   @RequiredGroups("!criteria")
   @Required()
   password: string;
   
-  @Column()
   @RequiredGroups("!criteria")
   @Required()
   firstName: string;
 
-  @Column()
   @RequiredGroups("!criteria")
   @Required()
   lastName: string;
 
-  @Column({ nullable: true })
   @Property()
   phone: string;
 
-  @Column({ nullable: true })
   @Property()
   address: string;
 

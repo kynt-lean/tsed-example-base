@@ -2,7 +2,7 @@ import { Req } from "@tsed/common";
 import { Unauthorized } from "@tsed/exceptions";
 import { Arg, OnVerify, Protocol } from "@tsed/passport";
 import { ExtractJwt, Strategy, StrategyOptions } from "passport-jwt";
-import { UsersService } from "../../../app/services/users/users.service";
+import { UsersService } from "../../../app/services";
 import { jwtConfig } from "../../../config/jwt";
 
 @Protocol<StrategyOptions>({
