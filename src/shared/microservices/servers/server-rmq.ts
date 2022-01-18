@@ -2,10 +2,22 @@ import { Server } from "./server";
 import { Transport } from "../enums";
 import { RmqUrl } from "../external";
 import { CustomTransportStrategy, IncomingRequest, OutgoingResponse, RmqOptions } from "../interfaces";
-import { CONNECT_EVENT, DISCONNECTED_RMQ_MESSAGE, DISCONNECT_EVENT, RQM_DEFAULT_IS_GLOBAL_PREFETCH_COUNT, RQM_DEFAULT_PREFETCH_COUNT, RQM_DEFAULT_QUEUE, RQM_DEFAULT_QUEUE_OPTIONS, RQM_DEFAULT_URL, RQM_DEFAULT_NOACK, NO_MESSAGE_HANDLER } from "../constants";
-import { isNil, isString, isUndefined } from "../../utils";
+import {
+  CONNECT_EVENT,
+  DISCONNECTED_RMQ_MESSAGE,
+  DISCONNECT_EVENT,
+  RQM_DEFAULT_IS_GLOBAL_PREFETCH_COUNT,
+  RQM_DEFAULT_PREFETCH_COUNT,
+  RQM_DEFAULT_QUEUE,
+  RQM_DEFAULT_QUEUE_OPTIONS,
+  RQM_DEFAULT_URL,
+  RQM_DEFAULT_NOACK,
+  NO_MESSAGE_HANDLER
+} from "../constants";
+import { isNil, isString, isUndefined, loadPackage } from "../../utils";
 import { RmqContext } from "../ctx-host";
 import { RmqRecordSerializer } from "../serializers";
+import { Logger } from "@tsed/common";
 
 let rmqPackage: any = {};
 
@@ -19,8 +31,11 @@ export class ServerRMQ extends Server implements CustomTransportStrategy {
   protected readonly queueOptions: any;
   protected readonly isGlobalPrefetchCount: boolean;
 
-  constructor(protected readonly options: RmqOptions['options']) {
-    super();
+  constructor(
+    protected readonly logger: Logger,
+    protected readonly options: RmqOptions['options']
+  ) {
+    super(logger);
     this.urls = [RQM_DEFAULT_URL];
     this.queue = RQM_DEFAULT_QUEUE;
     this.prefetchCount = RQM_DEFAULT_PREFETCH_COUNT;
@@ -33,8 +48,8 @@ export class ServerRMQ extends Server implements CustomTransportStrategy {
       this.isGlobalPrefetchCount = this.getOptionsProp(options, "isGlobalPrefetchCount", RQM_DEFAULT_IS_GLOBAL_PREFETCH_COUNT);
       this.queueOptions = this.getOptionsProp(options, "queueOptions", RQM_DEFAULT_QUEUE_OPTIONS);
     }
-    this.loadPackage('amqplib', ServerRMQ.name);
-    rmqPackage = this.loadPackage('amqp-connection-manager', ServerRMQ.name);
+    loadPackage('amqplib', ServerRMQ.name);
+    rmqPackage = loadPackage('amqp-connection-manager', ServerRMQ.name);
     this.initializeSerializer(options);
     this.initializeDeserializer(options);
   }
@@ -93,7 +108,7 @@ export class ServerRMQ extends Server implements CustomTransportStrategy {
           noAck,
         },
       );
-    }    
+    }
     if (callback) {
       callback();
     }

@@ -1,14 +1,13 @@
-import { Logger } from "@tsed/common";
 import * as net from 'net';
 import { EmptyError, lastValueFrom, share, tap } from "rxjs";
-import { ClientProxy } from ".";
 import { CLOSE_EVENT, ECONNREFUSED, ERROR_EVENT, MESSAGE_EVENT, TCP_DEFAULT_HOST, TCP_DEFAULT_PORT } from "../constants";
 import { JsonSocket } from "../helpers";
 import { PacketId, ReadPacket, TcpClientOptions, WritePacket } from "../interfaces";
+import { ClientProxy } from "./client-proxy";
 
-export class ClientTCP extends ClientProxy { 
+export class ClientTCP extends ClientProxy {
   protected connection: Promise<any>;
-  private readonly logger = new Logger(ClientTCP.name);
+
   private readonly port: number;
   private readonly host: string;
   private isConnected = false;

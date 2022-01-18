@@ -1,3 +1,1 @@
-export class RpcExceptionsHandler {
-  
-}
+export class RpcExceptionsHandler {}

@@ -6,11 +6,14 @@ import { CONNECT_EVENT, ERROR_EVENT } from "../constants";
 import { transformPatternToRoute } from "../utils";
 import { IdentitySerializer } from "../serializers";
 import { IncomingResponseDeserializer } from "../deserializers";
+import { Inject, Logger } from "@tsed/common";
 
 export abstract class ClientProxy {
   public abstract connect(): Promise<any>;
   public abstract close(): any;
 
+  @Inject()
+  protected readonly logger: Logger;
   protected routingMap = new Map<string, Function>();
   protected serializer: ProducerSerializer;
   protected deserializer: ProducerDeserializer;

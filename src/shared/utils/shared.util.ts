@@ -24,36 +24,27 @@ export const isPlainObject = (fn: any): fn is object => {
   );
 };
 
-export const addLeadingSlash = (path?: string): string =>
-  path && typeof path === 'string'
-    ? path.charAt(0) !== '/'
-      ? '/' + path
-      : path
-    : '';
-
-/**
- * Deprecated. Use the "addLeadingSlash" function instead.
- * @deprecated
- */
-export const validatePath = addLeadingSlash;
-
-export const normalizePath = (path?: string): string =>
-  path
-    ? path.startsWith('/')
-      ? ('/' + path.replace(/\/+$/, '')).replace(/\/+/g, '/')
-      : '/' + path.replace(/\/+$/, '')
-    : '/';
-
-export const stripEndSlash = (path: string) =>
-  path[path.length - 1] === '/' ? path.slice(0, path.length - 1) : path;
-
 export const isFunction = (val: any): boolean => typeof val === 'function';
 export const isString = (val: any): val is string => typeof val === 'string';
 export const isNumber = (val: any): val is number => typeof val === 'number';
 export const isConstructor = (val: any): boolean => val === 'constructor';
-export const isNil = (val: any): val is null | undefined =>
-  isUndefined(val) || val === null;
+export const isNil = (val: any): val is null | undefined => isUndefined(val) || val === null;
 export const isEmpty = (array: any): boolean => !(array && array.length > 0);
 export const isSymbol = (val: any): val is symbol => typeof val === 'symbol';
 
-export const randomStringGenerator = () => require("uuid").v4();
+// export const addLeadingSlash = (path?: string): string =>
+//   path && typeof path === 'string'
+//     ? path.charAt(0) !== '/'
+//       ? '/' + path
+//       : path
+//     : '';
+
+// export const normalizePath = (path?: string): string =>
+//   path
+//     ? path.startsWith('/')
+//       ? ('/' + path.replace(/\/+$/, '')).replace(/\/+/g, '/')
+//       : '/' + path.replace(/\/+$/, '')
+//     : '/';
+
+// export const stripEndSlash = (path: string) =>
+//   path[path.length - 1] === '/' ? path.slice(0, path.length - 1) : path;

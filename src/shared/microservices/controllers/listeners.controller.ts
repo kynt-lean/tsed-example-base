@@ -1,43 +1,18 @@
-import { Inject, Injectable, InjectorService, Provider, ProviderType } from "@tsed/common";
+import { InjectorService, Provider, ProviderType } from "@tsed/common";
 import { connectable, Observable, Subject } from "rxjs";
-import { PROVIDER_SERVER_MICROSERVICE } from "../constants";
 import { RpcProxy } from "../context";
 import { PatternType } from "../enums";
-import { CustomTransportStrategy, MessageHandler, MicroserviceOptions, MsStore } from "../interfaces";
-import { Server, ServerFactory } from "../servers";
+import { CustomTransportStrategy, MessageHandler, MicroserviceStore } from "../interfaces";
+import { Server } from "../servers";
 
-@Injectable()
-export class ServerService {
-  @Inject()
-  protected rpcProxy: RpcProxy;
+export class ListenersController {
+  constructor(
+    private readonly injector: InjectorService,
+    private readonly rpcProxy: RpcProxy,
+    private readonly server: Server & CustomTransportStrategy,
+  ) { }
 
-  @Inject()
-  protected injector: InjectorService;
-
-  protected server: Server & CustomTransportStrategy;
-
-  public async initServer(config: MicroserviceOptions) {
-    this.createServer(config);
-    await this.registerMessageHandlersForProviders();
-    await this.listen();
-  }
-
-  protected createServer(config: MicroserviceOptions) {
-    this.server = ServerFactory.create(config);
-  }
-
-  protected async listen() {
-    return new Promise<any>((resolve, reject) => {
-      this.server.listen((err, info) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve(info);
-      });
-    });
-  }
-
-  protected async registerMessageHandlersForProviders(): Promise<any> {
+  public async registerMessageHandlersForProviders(): Promise<any> {
     const providers = this.getProviders();
     await Promise.all(
       providers.map((provider) => this.registerMessageHandlersForProvider(provider))
@@ -45,7 +20,7 @@ export class ServerService {
   }
 
   protected async registerMessageHandlersForProvider(provider: Provider): Promise<any> {
-    const store = provider.store.get<MsStore>("microservice");
+    const store = provider.store.get<MicroserviceStore>("microservice");
     const msClass = provider.name;
 
     if (!store || !store[msClass]) {
@@ -61,7 +36,7 @@ export class ServerService {
         const proxy = this.rpcProxy.create(callback);
 
         if (type === PatternType.EVENT) {
-          const isEventHandler = true;          
+          const isEventHandler = true;
           const eventHandler: MessageHandler = (...args: unknown[]) => {
             const originalArgs = args;
             const originalReturnValue = proxy(...args);

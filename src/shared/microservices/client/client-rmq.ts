@@ -1,7 +1,7 @@
-import { Logger } from "@tsed/common";
+import { importPackage } from "@tsed/core";
 import { EventEmitter } from "events";
 import { EmptyError, first, fromEvent, lastValueFrom, map, merge, Observable, share, switchMap } from "rxjs";
-import { loadPackage, randomStringGenerator } from "../../utils";
+import { randomStringGenerator } from "../../utils";
 import { DISCONNECTED_RMQ_MESSAGE, DISCONNECT_EVENT, ERROR_EVENT, RQM_DEFAULT_IS_GLOBAL_PREFETCH_COUNT, RQM_DEFAULT_PERSISTENT, RQM_DEFAULT_PREFETCH_COUNT, RQM_DEFAULT_QUEUE, RQM_DEFAULT_QUEUE_OPTIONS, RQM_DEFAULT_URL, RQM_DEFAULT_NOACK } from "../constants";
 import { RmqUrl } from "../external";
 import { ReadPacket, RmqOptions, WritePacket } from "../interfaces";
@@ -13,8 +13,7 @@ let rmqPackage: any = {};
 
 const REPLY_QUEUE = 'amq.rabbitmq.reply-to';
 
-export class ClientRMQ extends ClientProxy { 
-  protected readonly logger = new Logger(ClientProxy.name);
+export class ClientRMQ extends ClientProxy {  
   protected connection: Promise<any>;
   protected client: any = null;
   protected channel: any = null;
@@ -23,7 +22,7 @@ export class ClientRMQ extends ClientProxy {
   protected queueOptions: any;
   protected responseEmitter: EventEmitter;
   protected replyQueue: string;
-  protected persistent: boolean;
+  protected persistent: boolean;  
 
   constructor(protected readonly options: RmqOptions['options']) {
     super();
@@ -39,8 +38,8 @@ export class ClientRMQ extends ClientProxy {
       this.persistent = this.getOptionsProp(options, 'persistent', RQM_DEFAULT_PERSISTENT);
     }
 
-    loadPackage('amqplib', ClientRMQ.name);
-    rmqPackage = loadPackage('amqp-connection-manager', ClientRMQ.name);
+    importPackage('amqplib');
+    rmqPackage = importPackage('amqp-connection-manager');
 
     this.initializeSerializer(options);
     this.initializeDeserializer(options);

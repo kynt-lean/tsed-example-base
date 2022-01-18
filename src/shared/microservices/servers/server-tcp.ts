@@ -1,3 +1,4 @@
+import { Logger } from '@tsed/common';
 import * as net from 'net';
 import { Server as NetSocket, Socket } from 'net';
 import { isString, isUndefined } from '../../utils';
@@ -17,8 +18,11 @@ export class ServerTCP extends Server implements CustomTransportStrategy {
   private isExplicitlyTerminated = false;
   private retryAttemptsCount = 0;
 
-  constructor(private readonly options: TcpOptions['options']) {
-    super();
+  constructor(
+    protected readonly logger: Logger,
+    private readonly options: TcpOptions['options']
+  ) {
+    super(logger);
     this.port = TCP_DEFAULT_PORT;
     this.host = TCP_DEFAULT_HOST;
     if (options) {

@@ -1,0 +1,1 @@
+export const randomStringGenerator = () => require("uuid").v4();

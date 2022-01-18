@@ -2,7 +2,7 @@ import { deepClone, Type } from "@tsed/core";
 import fs from "fs"
 import path from "path";
 import { rootDir } from "../../config";
-import { randomStringGenerator } from "./shared.util";
+import { randomStringGenerator } from "./random-string-generator.util";
 
 export interface MemoryCollectionID {
   id: string;

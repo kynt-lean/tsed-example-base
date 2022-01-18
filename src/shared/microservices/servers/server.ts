@@ -1,7 +1,6 @@
-import { Logger } from "@tsed/common";
+import { Inject, Logger } from "@tsed/common";
 import { connectable, EMPTY, from as fromPromise, isObservable, Observable, ObservedValueOf, of, Subject, Subscription } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-import { loadPackage } from "../../utils";
 import { NO_EVENT_HANDLER } from "../constants";
 import { BaseRpcContext } from "../ctx-host";
 import { IncomingRequestDeserializer } from "../deserializers";
@@ -12,9 +11,10 @@ import { transformPatternToRoute } from "../utils";
 
 export abstract class Server {
   protected readonly messageHandlers = new Map<string, MessageHandler>();
-  protected readonly logger: Logger = new Logger(Server.name);
   protected serializer: ConsumerSerializer;
   protected deserializer: ConsumerDeserializer;
+
+  constructor(protected readonly logger: Logger) {}
 
   public addHandler(
     pattern: any,
@@ -133,14 +133,6 @@ export abstract class Server {
     this.logger.error(error);
   }
 
-  protected loadPackage<T = any>(
-    name: string,
-    ctx: string,
-    loader?: Function,
-  ): T {
-    return loadPackage(name, ctx, loader);
-  }
-
   protected initializeSerializer(options: ClientOptions['options']) {
     this.serializer =
       (options &&
@@ -157,7 +149,7 @@ export abstract class Server {
       (options &&
         (
           options as
-            | RmqOptions['options']
+          | RmqOptions['options']
         )?.deserializer
       ) ||
       new IncomingRequestDeserializer();
