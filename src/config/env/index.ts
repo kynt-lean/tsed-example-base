@@ -16,7 +16,7 @@ export const jwtEnv = {
 
 export const dbEnv = {
   host: process.env.DATABASE_HOST || "localhost",
-  port: parseInt(process.env.DATABASE_PORT || "1433"),
+  port: parseInt(process.env.DATABASE_PORT || "5432"),
   username: process.env.DATABASE_USER || "user",
   password: process.env.DATABASE_PASS || "password",
   database: process.env.DATABASE_NAME || "database"

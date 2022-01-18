@@ -9,9 +9,10 @@ const defaultOptions: RouteDecoratorOptions = {
     protocol: "jwt"
   },
   security: {
-    name: "bearer"
+    name: "bearer",
+    noSecurity: false
   },
-  defaultOptions: true
+  default: true
 }
 
 export interface RouteSuccessOptions {
@@ -23,23 +24,24 @@ export interface RouteSuccessOptions {
 export interface RouteDecoratorOptions {
   authenticate?: RouteAuthenticateOptions;
   security?: RouteSecurityOptions;
-  successOptions?: RouteSuccessOptions;
-  defaultOptions?: boolean;
+  success?: RouteSuccessOptions;
+  default?: boolean;
 }
 
 export interface RouteAuthenticateOptions {
   protocol?: string | string[];
-  options?: AuthenticateOptions;
+  authOptions?: AuthenticateOptions;
 }
 
 export interface RouteSecurityOptions {
-  name: string;
+  name?: string;
   scopes?: string[];
+  noSecurity?: boolean;
 }
 
 export function RouteDecorator(options?: RouteDecoratorOptions): Function {
-  if (!isFalse(options?.defaultOptions)) {
-    mergeDefaultOptions(defaultOptions, options);
+  if (!isFalse(options?.default)) {
+    options = mergeDefaultOptions(defaultOptions, options);
   }
 
   let decorators: AnyDecorator[];
@@ -51,15 +53,17 @@ export function RouteDecorator(options?: RouteDecoratorOptions): Function {
     Returns(500).Description("Server error"),
     Returns(501).Description("Server error")
   ];
-  if (options?.successOptions) {
-    const { statusCode, model, description } = options.successOptions;
-    decorators.push(Returns(statusCode || 200, model).Description(description || "Success"));
-  }
+
+  const { statusCode, model, description } = options?.success || { statusCode: 200, model: undefined, description: undefined };
+  decorators.push(Returns(statusCode, model).Description(description || "Success"));
+
   if (options?.authenticate) {
-    decorators.push(Authenticate(options?.authenticate.protocol, options?.authenticate.options || { session: true }));
+    const { protocol, authOptions } = options.authenticate;
+    decorators.push(Authenticate(protocol, authOptions || { session: true }));
   }
-  if (options?.security) {
-    decorators.push(Security(options?.security.name, ...(options?.security.scopes || [])));
+  if (options?.security?.name && !options.security.noSecurity) {
+    const { name, scopes } = options.security;
+    decorators.push(Security(name, ...(scopes || [])));
   }
   return useDecorators(
     ...decorators
@@ -74,11 +78,12 @@ export function mergeDefaultOptions<T>(defaultOptions: T, options?: T) {
     for (const key of keys) {
       const defaultValue = defaultOptions[key];
       let value = options[key];
-      if (isObject(value)) {
+      if (isObject(defaultValue)) {
         value = mergeDefaultOptions(defaultValue, value);
       } else {
         value = value ?? defaultValue;
       }
+      options[key] = value;
     }
     return options;
   }

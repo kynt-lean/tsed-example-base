@@ -10,20 +10,20 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @Post("/login")
-  @RouteDecorator({ authenticate: { protocol: "login" } })
+  @RouteDecorator({ authenticate: { protocol: "login" }, security: { noSecurity: true} })
   @Returns(200, User).Groups("secret")
   public async login(@Req() req: any, @BodyParams() @Groups("login") user: User) {
     return await this.authService.login(req.user);
   }
 
   @Post("/logout")
-  @Returns(204)
+  @RouteDecorator({ successOptions: { statusCode: 204, description: 'No Content' }})
   logout(@Session() session: ExpressSession) {
     session.destroy((err: any) => err);
   }
 
   @Post("/signup")
-  @RouteDecorator({ authenticate: { protocol: "signup" } })
+  @RouteDecorator({ authenticate: { protocol: "signup" }, security: { noSecurity: true} })
   @Returns(200, User).Groups("read")
   signup(@Session() session: ExpressSession, @Req() req: Req, @BodyParams() @Groups("create") user: User) {
     session.destroy((err: any) => err);
