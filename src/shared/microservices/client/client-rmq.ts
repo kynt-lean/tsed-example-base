@@ -1,7 +1,6 @@
-import { importPackage } from "@tsed/core";
 import { EventEmitter } from "events";
 import { EmptyError, first, fromEvent, lastValueFrom, map, merge, Observable, share, switchMap } from "rxjs";
-import { randomStringGenerator } from "../../utils";
+import { loadPackage, randomStringGenerator } from "../../utils";
 import { DISCONNECTED_RMQ_MESSAGE, DISCONNECT_EVENT, ERROR_EVENT, RQM_DEFAULT_IS_GLOBAL_PREFETCH_COUNT, RQM_DEFAULT_PERSISTENT, RQM_DEFAULT_PREFETCH_COUNT, RQM_DEFAULT_QUEUE, RQM_DEFAULT_QUEUE_OPTIONS, RQM_DEFAULT_URL, RQM_DEFAULT_NOACK } from "../constants";
 import { RmqUrl } from "../external";
 import { ReadPacket, RmqOptions, WritePacket } from "../interfaces";
@@ -38,8 +37,8 @@ export class ClientRMQ extends ClientProxy {
       this.persistent = this.getOptionsProp(options, 'persistent', RQM_DEFAULT_PERSISTENT);
     }
 
-    importPackage('amqplib');
-    rmqPackage = importPackage('amqp-connection-manager');
+    loadPackage('amqplib', ClientRMQ.name);
+    rmqPackage = loadPackage('amqp-connection-manager', ClientRMQ.name);
 
     this.initializeSerializer(options);
     this.initializeDeserializer(options);
