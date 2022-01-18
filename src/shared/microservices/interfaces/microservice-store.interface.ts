@@ -7,10 +7,6 @@ export interface MicroserviceStoreOptions {
   transport?: Transport;
 }
 
-export interface MsStore {
-  [msClass: string]: {[msMethod: string]: MicroserviceStoreOptions};
-}
-
 export interface MicroserviceStore {
   [msClass: string]: {[msMethod: string]: MicroserviceStoreOptions};
 }

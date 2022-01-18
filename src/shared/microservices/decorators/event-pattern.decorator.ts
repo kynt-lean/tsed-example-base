@@ -1,6 +1,6 @@
 import { Store, useDecorators } from "@tsed/core";
 import { PatternType, Transport } from "../enums";
-import { MsStore } from "../interfaces";
+import { MicroserviceStore } from "../interfaces";
 
 export function EventPattern<T = string>(
   metadata?: T,
@@ -9,7 +9,7 @@ export function EventPattern<T = string>(
   return useDecorators(
     (target: any, propertyKey: string) => {
       const className = target.constructor.name;
-      const store: MsStore = {
+      const store: MicroserviceStore = {
         [className]: {
           [propertyKey]: {
             type: PatternType.EVENT,
