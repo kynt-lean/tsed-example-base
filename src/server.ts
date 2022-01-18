@@ -50,7 +50,7 @@ export class Server {
         this.injector,
         msConfig
       );
-      await microservice.listen();
+      microservice.listen();
     }
   }
 }

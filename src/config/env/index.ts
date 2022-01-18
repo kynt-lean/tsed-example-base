@@ -14,7 +14,7 @@ export const jwtEnv = {
   expiresIn: process.env.JWT_EXPIRESIN,
 }
 
-export const DbEnv = {
+export const dbEnv = {
   host: process.env.DATABASE_HOST || "localhost",
   port: parseInt(process.env.DATABASE_PORT || "1433"),
   username: process.env.DATABASE_USER || "user",

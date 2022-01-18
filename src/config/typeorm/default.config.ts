@@ -1,14 +1,16 @@
-import { DbEnv } from "../env";
-import { rootDir } from "..";
+import { join } from "path";
+import { dbEnv } from "../env";
+
+const rootDir = join(__dirname, "..", "..");
 
 export = {
   name: "default",
   type: "postgres",
-  host: DbEnv.host,
-  port: DbEnv.port,
-  username: DbEnv.username,
-  password: DbEnv.password,
-  database: DbEnv.database,
+  host: dbEnv.host,
+  port: dbEnv.port,
+  username: dbEnv.username,
+  password: dbEnv.password,
+  database: dbEnv.database,
   synchronize: false,
   logging: false,
   entities: [
