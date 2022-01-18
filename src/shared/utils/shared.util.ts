@@ -31,6 +31,7 @@ export const isConstructor = (val: any): boolean => val === 'constructor';
 export const isNil = (val: any): val is null | undefined => isUndefined(val) || val === null;
 export const isEmpty = (array: any): boolean => !(array && array.length > 0);
 export const isSymbol = (val: any): val is symbol => typeof val === 'symbol';
+export const isFalse = (val: any): boolean => val === false;
 
 // export const addLeadingSlash = (path?: string): string =>
 //   path && typeof path === 'string'

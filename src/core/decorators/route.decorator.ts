@@ -1,7 +1,8 @@
-import { useDecorators } from "@tsed/core";
+import { Type, useDecorators } from "@tsed/core";
 import { AnyDecorator } from "@tsed/core/lib/types/interfaces/AnyDecorator";
 import { Authenticate, AuthenticateOptions } from "@tsed/passport";
 import { Returns, Security } from "@tsed/schema";
+import { isFalse, isObject } from "../../shared/utils";
 
 const defaultOptions: RouteDecoratorOptions = {
   authenticate: {
@@ -13,9 +14,16 @@ const defaultOptions: RouteDecoratorOptions = {
   defaultOptions: true
 }
 
+export interface RouteSuccessOptions {
+  statusCode?: string | number,
+  model?: Type<any> | Type<any>[],
+  description?: string;
+}
+
 export interface RouteDecoratorOptions {
   authenticate?: RouteAuthenticateOptions;
   security?: RouteSecurityOptions;
+  successOptions?: RouteSuccessOptions;
   defaultOptions?: boolean;
 }
 
@@ -30,8 +38,8 @@ export interface RouteSecurityOptions {
 }
 
 export function RouteDecorator(options?: RouteDecoratorOptions): Function {
-  if (!options) {
-    options = defaultOptions;
+  if (!isFalse(options?.defaultOptions)) {
+    mergeDefaultOptions(defaultOptions, options);
   }
 
   let decorators: AnyDecorator[];
@@ -43,6 +51,10 @@ export function RouteDecorator(options?: RouteDecoratorOptions): Function {
     Returns(500).Description("Server error"),
     Returns(501).Description("Server error")
   ];
+  if (options?.successOptions) {
+    const { statusCode, model, description } = options.successOptions;
+    decorators.push(Returns(statusCode || 200, model).Description(description || "Success"));
+  }
   if (options?.authenticate) {
     decorators.push(Authenticate(options?.authenticate.protocol, options?.authenticate.options || { session: true }));
   }
@@ -52,4 +64,22 @@ export function RouteDecorator(options?: RouteDecoratorOptions): Function {
   return useDecorators(
     ...decorators
   );
+}
+
+export function mergeDefaultOptions<T>(defaultOptions: T, options?: T) {
+  const keys = Object.keys(defaultOptions) as [keyof T];
+  if (!options) {
+    return defaultOptions;
+  } else {
+    for (const key of keys) {
+      const defaultValue = defaultOptions[key];
+      let value = options[key];
+      if (isObject(value)) {
+        value = mergeDefaultOptions(defaultValue, value);
+      } else {
+        value = value ?? defaultValue;
+      }
+    }
+    return options;
+  }
 }
