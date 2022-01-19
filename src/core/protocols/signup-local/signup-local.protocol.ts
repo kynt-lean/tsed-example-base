@@ -7,7 +7,7 @@ import { UsersService } from "../../../app/services";
 import { User } from "../../../app/models";
 
 @Protocol({
-  name: "signup",
+  name: "signup-local",
   useStrategy: Strategy,
   settings: {
     usernameField: "userName",

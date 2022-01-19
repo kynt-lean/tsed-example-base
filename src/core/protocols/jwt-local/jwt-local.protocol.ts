@@ -6,7 +6,7 @@ import { UsersService } from "../../../app/services";
 import { jwtConfig } from "../../../config/jwt";
 
 @Protocol<StrategyOptions>({
-  name: "jwt",
+  name: "jwt-local",
   useStrategy: Strategy,
   settings: {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

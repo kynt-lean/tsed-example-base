@@ -67,7 +67,7 @@ export const config: Partial<TsED.Configuration> = {
     enabled: false
   },
   jwt: jwtConfig,
-  typeorm: typeormConfig,
+  // typeorm: typeormConfig,
   microservice: rmqConfig
 };
 

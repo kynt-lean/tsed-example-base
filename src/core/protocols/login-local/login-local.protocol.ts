@@ -7,7 +7,7 @@ import { UsersService } from "../../../app/services";
 import { User } from "../../../app/models";
 
 @Protocol<IStrategyOptions>({
-  name: "login",
+  name: "login-local",
   useStrategy: Strategy,
   settings: {
     usernameField: "userName",

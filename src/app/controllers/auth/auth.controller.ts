@@ -1,5 +1,5 @@
-import { Controller, BodyParams, Req, Session } from "@tsed/common";
-import { Groups, Post, Returns } from "@tsed/schema";
+import { BodyParams, Controller, Req, Session } from "@tsed/common";
+import { Get, Groups, Post } from "@tsed/schema";
 import { Session as ExpressSession } from "express-session";
 import { RouteDecorator } from "../../../core/decorators";
 import { User } from "../../models";
@@ -10,23 +10,14 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @Post("/login")
-  @RouteDecorator({ authenticate: { protocol: "login" }, security: { noSecurity: true} })
-  @Returns(200, User).Groups("secret")
+  @RouteDecorator({ authenticate: { protocol: "login-local" }, security: { noSecurity: true }, success: { model: User, groups: "secret" } })
   public async login(@Req() req: any, @BodyParams() @Groups("login") user: User) {
     return await this.authService.login(req.user);
   }
 
-  @Post("/logout")
-  @RouteDecorator({ successOptions: { statusCode: 204, description: 'No Content' }})
+  @Get("/logout")
+  @RouteDecorator({ success: { statusCode: 204, description: "No Content" } })
   logout(@Session() session: ExpressSession) {
     session.destroy((err: any) => err);
-  }
-
-  @Post("/signup")
-  @RouteDecorator({ authenticate: { protocol: "signup" }, security: { noSecurity: true} })
-  @Returns(200, User).Groups("read")
-  signup(@Session() session: ExpressSession, @Req() req: Req, @BodyParams() @Groups("create") user: User) {
-    session.destroy((err: any) => err);
-    return req.user;
   }
 }
